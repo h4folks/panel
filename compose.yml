@@ -32,6 +32,7 @@ services:
     restart: always
     networks:
       - default
+      - h4folks
     ports:
       - "80:80"
       # - "443:443"
@@ -55,3 +56,6 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
+
+  h4folks:
+    external: true
