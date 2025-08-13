@@ -6,6 +6,10 @@ use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\EggVariable;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
@@ -28,11 +32,15 @@ use Illuminate\Validation\Rules\Unique;
 
 class CreateEgg extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = EggResource::class;
 
     protected static bool $canCreateAnother = false;
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             $this->getCreateFormAction()->formId('form'),
@@ -199,7 +207,7 @@ class CreateEgg extends CreateRecord
                                             '*' => trans('admin/egg.error_reserved'),
                                         ])
                                         ->required(),
-                                    TextInput::make('default_value')->label(trans('admin/egg.default_value'))->maxLength(255),
+                                    TextInput::make('default_value')->label(trans('admin/egg.default_value')),
                                     Fieldset::make(trans('admin/egg.user_permissions'))
                                         ->schema([
                                             Checkbox::make('user_viewable')->label(trans('admin/egg.viewable')),
@@ -246,7 +254,11 @@ class CreateEgg extends CreateRecord
                                 ->native(false)
                                 ->selectablePlaceholder(false)
                                 ->default('bash')
-                                ->options(['bash', 'ash', '/bin/bash'])
+                                ->options([
+                                    'bash' => 'bash',
+                                    'ash' => 'ash',
+                                    '/bin/bash' => '/bin/bash',
+                                ])
                                 ->required(),
                             MonacoEditor::make('script_install')
                                 ->label(trans('admin/egg.script_install'))
